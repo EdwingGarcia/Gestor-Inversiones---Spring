@@ -10,27 +10,27 @@ import com.edwingGarcia.CRUD.repositorio.InversionRepository;
 
 @Service
 public class InversionService {
-	 private final InversionRepository inversionRepository;
+	private final InversionRepository inversionRepository;
 
-	    @Autowired
-	    public InversionService(InversionRepository inversionRepository) {
-	        this.inversionRepository = inversionRepository;
-	    }
+	@Autowired
+	public InversionService(InversionRepository inversionRepository) {
+		this.inversionRepository = inversionRepository;
+	}
 
-	    public List<Inversion> listar() {
-	        return inversionRepository.findAll(); // Devuelve todas las inversiones
-	    }
+	public List<Inversion> listar() {
+		return inversionRepository.findAll();
+	}
 
-	    public Inversion guardar(Inversion inversion) {
-	        return inversionRepository.save(inversion); // Guarda una nueva inversión
-	    }
+	public Inversion guardar(Inversion inversion) {
+		return inversionRepository.save(inversion);
+	}
 
-	    public Inversion obtenerPorId(Long id) {
-	        return inversionRepository.findById(id).orElse(null); // Devuelve una inversión por su ID
-	    }
+	public Inversion obtenerPorId(Long id) {
+		return inversionRepository.findById(id).orElse(null);
+	}
 
-	    public void eliminar(Long id) {
-	        inversionRepository.deleteById(id); // Elimina una inversión por su ID
-	    }
+	public void eliminar(Long id) {
+		inversionRepository.deleteById(id);
+	}
 
 }

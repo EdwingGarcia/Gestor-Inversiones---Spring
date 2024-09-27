@@ -30,6 +30,11 @@ public class Controlador {
         model.addAttribute("inversiones", inversiones);
         return "index"; 
     }
+    @GetMapping("/agregar") 
+    public String mostrarFormularioAgregar(Model model) {
+        model.addAttribute("inversion", new Inversion()); 
+        return "formulario-agregar"; 
+    }
 
     @PostMapping("/guardar")
     public String guardar(Inversion inversion) {
