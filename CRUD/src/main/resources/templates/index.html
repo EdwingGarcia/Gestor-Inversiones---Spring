@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Inversiones</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Lista de Inversiones</h1>
+        <a href="/inversiones/nueva" class="btn btn-primary mb-3">Agregar Nueva Inversión</a> <!-- Botón para agregar nueva inversión -->
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Monto Invertido</th>
+                    <th>Acciones</th> <!-- Agregar columna para acciones -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="inversion : ${inversiones}"> <!-- Cambiado a 'inversiones' -->
+                    <td th:text="${inversion.id}"></td>
+                    <td th:text="${inversion.nombre}"></td>
+                    <td th:text="${inversion.tipo}"></td>
+                    <td th:text="${inversion.montoInvertido}"></td>
+                    <td>
+                        <a th:href="@{/inversiones/editar/{id}(id=${inversion.id})}" class="btn btn-warning">Editar</a>
+                        <a th:href="@{/inversiones/eliminar/{id}(id=${inversion.id})}" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
