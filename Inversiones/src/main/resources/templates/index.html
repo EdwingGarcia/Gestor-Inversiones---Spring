@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Inversiones</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Sistema de Inversiones</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+		<div id="navbar" class="collapse navbar-collapse">
+						<ul class="nav navbar-nav">
+							<li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Cerrar
+									sesión</a></li>
+						</ul>
+					</div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Lista de Inversiones</h1>
+        <a href="/inversiones/agregar" class="btn btn-primary mb-3">Agregar Nueva Inversión</a>
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Monto Invertido($)</th>
+                    <th>Fecha Inversión</th>
+                    <th>Valor Actual</th>
+                    <th>Rendimiento</th>
+                    <th>Fecha Vencimiento</th>
+                    <th>Riesgo(%)</th>
+                    <th>Divisa</th>
+                    <th>Estado</th>
+                    <th>Ganancias/Pérdidas</th>
+                    <th>Comentarios</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="inversion : ${inversiones}">
+                    <td th:text="${inversion.id}"></td>
+                    <td th:text="${inversion.nombre}"></td>
+                    <td th:text="${inversion.tipo}"></td>
+                    <td th:text="${inversion.montoInvertido}"></td>
+                    <td th:text="${inversion.fechaInversion}"></td>
+                    <td th:text="${inversion.valorActual}"></td>
+                    <td th:text="${inversion.rendimiento}"></td>
+                    <td th:text="${inversion.fechaVencimiento}"></td>
+                    <td th:text="${inversion.riesgo}"></td>
+                    <td th:text="${inversion.divisa}"></td>
+                    <td th:text="${inversion.estado}"></td>
+                    <td th:text="${inversion.gananciasPerdidas}"></td>
+                    <td th:text="${inversion.comentarios}"></td>
+                    <td>
+                        <a th:href="@{/inversiones/editar/{id}(id=${inversion.id})}" class="btn btn-warning">Editar</a>
+                        <a th:href="@{/inversiones/eliminar/{id}(id=${inversion.id})}" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
