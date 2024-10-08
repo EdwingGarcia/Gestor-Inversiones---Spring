@@ -33,7 +33,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/include/**", "/css/**", "/icons/**", "/img/**", "/js/**", "/layer/**").permitAll()
                         .requestMatchers("/login", "/registro").permitAll()
-                        .requestMatchers("/", "/inversiones/listar").authenticated()
+                        .requestMatchers("/", "/inversiones","/operativa").authenticated()
                         .requestMatchers("/admin*").hasRole("ADMIN")
                         .requestMatchers("/user*").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()

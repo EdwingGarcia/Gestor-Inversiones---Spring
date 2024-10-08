@@ -1,58 +1,51 @@
-// Función para manejar la acción de pegar (Ctrl + V)
-document.addEventListener('paste', function(event) {
-    let items = (event.clipboardData || event.originalEvent.clipboardData).items;
+document.addEventListener('DOMContentLoaded', function () {
+    // Función para actualizar la vista previa de la imagen
+    function actualizarVistaPrevia(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const imgPreview = document.getElementById(previewId);
+        const modal = document.getElementById("myModal");
+        const expandedImg = document.getElementById("expandedImg");
+        const closeModal = document.getElementById("closeModal");
 
-    for (let index in items) {
-        let item = items[index];
-        if (item.kind === 'file') {
-            let blob = item.getAsFile();
-            let reader = new FileReader();
+        // Añadir un evento para actualizar la previsualización cuando cambie el input
+        input.addEventListener('input', function () {
+            const enlaceImagen = input.value;
+            imgPreview.innerHTML = ''; // Limpiar la vista previa anterior
 
-            reader.onload = function(event) {
-                let activeTimeframe = getActiveTimeframe(); // Función para obtener el timeframe activo
-                if (activeTimeframe) {
-                    let imgElement = document.createElement('img');
-                    imgElement.src = event.target.result;
-                    imgElement.style.width = '100%'; // Ajusta la imagen al 100% del contenedor
-                    imgElement.style.maxHeight = '100%'; // Para ajustar la altura máxima según el tamaño del contenedor
-                    imgElement.style.objectFit = 'cover'; // Para que la imagen se ajuste al tamaño del contenedor
-                    document.getElementById(activeTimeframe).innerHTML = ''; // Limpia cualquier imagen previa
-                    document.getElementById(activeTimeframe).appendChild(imgElement);
-                }
-            };
+            if (enlaceImagen) {
+                const img = document.createElement('img');
+                img.src = enlaceImagen;
+                img.alt = 'Vista Previa';
+                img.onerror = function () {
+                    imgPreview.innerHTML = 'No se pudo cargar la imagen. Verifica que la URL sea correcta.';
+                };
+                imgPreview.appendChild(img);
 
-            reader.readAsDataURL(blob);
-        }
+                // Añadir evento para abrir el modal al hacer clic en la imagen
+                img.onclick = function() {
+                    expandedImg.src = enlaceImagen; // Establecer la fuente de la imagen expandida
+                    modal.style.display = "block"; // Mostrar el modal
+                };
+            }
+        });
+
+        // Cerrar el modal al hacer clic en el botón de cerrar
+        closeModal.onclick = function() {
+            modal.style.display = "none"; // Ocultar el modal
+        };
+
+        // Cerrar el modal al hacer clic fuera de la imagen
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none"; // Ocultar el modal
+            }
+        };
     }
-});
 
-// Función para obtener el timeframe activo (determinado por cuál área de texto tiene el foco)
-function getActiveTimeframe() {
-    if (document.activeElement.id === 'observacion4h') return 'imgPreview4h';
-    if (document.activeElement.id === 'observacion1h') return 'imgPreview1h';
-    if (document.activeElement.id === 'observacion15m') return 'imgPreview15m';
-    if (document.activeElement.id === 'observacion5m') return 'imgPreview5m';
-    if (document.activeElement.id === 'observacion1m') return 'imgPreview1m';
-    return null;
-}
-
-// Agregar eventos para botones de eliminar para cada timeframe
-document.getElementById('removeImg4h').addEventListener('click', function() {
-    document.getElementById('imgPreview4h').innerHTML = ''; // Elimina la imagen de 4H
-});
-
-document.getElementById('removeImg1h').addEventListener('click', function() {
-    document.getElementById('imgPreview1h').innerHTML = ''; // Elimina la imagen de 1H
-});
-
-document.getElementById('removeImg15m').addEventListener('click', function() {
-    document.getElementById('imgPreview15m').innerHTML = ''; // Elimina la imagen de 15M
-});
-
-document.getElementById('removeImg5m').addEventListener('click', function() {
-    document.getElementById('imgPreview5m').innerHTML = ''; // Elimina la imagen de 5M
-});
-
-document.getElementById('removeImg1m').addEventListener('click', function() {
-    document.getElementById('imgPreview1m').innerHTML = ''; // Elimina la imagen de 1M
+    // Llamar a la función para cada timeframe
+    actualizarVistaPrevia('enlaceImagen4h', 'imgPreview4h');
+    actualizarVistaPrevia('enlaceImagen1h', 'imgPreview1h');
+    actualizarVistaPrevia('enlaceImagen15m', 'imgPreview15m');
+    actualizarVistaPrevia('enlaceImagen5m', 'imgPreview5m');
+    actualizarVistaPrevia('enlaceImagen1m', 'imgPreview1m');
 });
