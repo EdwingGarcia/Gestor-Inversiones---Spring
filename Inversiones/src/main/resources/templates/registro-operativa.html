@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Operativa</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/registro-operativa.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Registro de Operativa</h1>
+    <form th:action="@{/operativa/guardar}" method="post" th:object="${registroOperativa}" enctype="multipart/form-data">
+        <!-- Fecha -->
+        <div class="form-group">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required>
+        </div>
+
+        <!-- Sesión -->
+        <div class="form-group">
+            <label for="sesion">Sesión:</label>
+            <select id="sesion" name="sesion" required>
+                <option value="new_york">New York</option>
+                <option value="tokio">Tokio</option>
+                <option value="london">London</option>
+            </select>
+        </div>
+
+        <!-- Divisa -->
+        <div class="form-group">
+            <label for="divisa">Divisa:</label>
+            <select id="divisa" name="divisa" required>
+                <option value="eur_usd">EUR/USD</option>
+                <option value="aud_usd">AUD/USD</option>
+                <option value="gbp_usd">GBP/USD</option>
+            </select>
+        </div>
+
+        <!-- Resultado en Pips -->
+        <div class="form-group">
+            <label for="stopSize">Stop Size:</label>
+            <input type="number" id="stopSize" name="stopSize" required>
+        </div>
+
+        <div class="form-group">
+            <label for="resultado">Resultado:</label>
+            <select id="resultado" name="resultado" required>
+                <option value="take_profit">Take Profit</option>
+                <option value="stop_loss">Stop Loss</option>
+                <option value="break_even">Break Even</option>
+            </select>
+        </div>
+
+        <!-- Timeframes -->
+        <h2>Observaciones por Timeframe</h2>
+
+        <!-- Timeframe 4H -->
+        <div class="timeframe-group">
+            <h3>4H</h3>
+            <textarea id="observacion4h" name="observacion4h" placeholder="Escribe observaciones para 4H..."></textarea>
+            <div class="img-preview" id="imgPreview4h"></div>
+            <input type="file" id="imagen4h" name="imagen4h" accept="image/*" style="display: none;">
+            <button type="button" class="remove-btn" id="removeImg4h">Eliminar Imagen</button>
+        </div>
+
+        <!-- Timeframe 1H -->
+        <div class="timeframe-group">
+            <h3>1H</h3>
+            <textarea id="observacion1h" name="observacion1h" placeholder="Escribe observaciones para 1H..."></textarea>
+            <div class="img-preview" id="imgPreview1h"></div>
+            <input type="file" id="imagen1h" name="imagen1h" accept="image/*" style="display: none;">
+            <button type="button" class="remove-btn" id="removeImg1h">Eliminar Imagen</button>
+        </div>
+
+        <!-- Timeframe 15M -->
+        <div class="timeframe-group">
+            <h3>15M</h3>
+            <textarea id="observacion15m" name="observacion15m" placeholder="Escribe observaciones para 15M..."></textarea>
+            <div class="img-preview" id="imgPreview15m"></div>
+            <input type="file" id="imagen15m" name="imagen15m" accept="image/*" style="display: none;">
+            <button type="button" class="remove-btn" id="removeImg15m">Eliminar Imagen</button>
+        </div>
+
+        <!-- Timeframe 5M -->
+        <div class="timeframe-group">
+            <h3>5M</h3>
+            <textarea id="observacion5m" name="observacion5m" placeholder="Escribe observaciones para 5M..."></textarea>
+            <div class="img-preview" id="imgPreview5m"></div>
+            <input type="file" id="imagen5m" name="imagen5m" accept="image/*" style="display: none;">
+            <button type="button" class="remove-btn" id="removeImg5m">Eliminar Imagen</button>
+        </div>
+
+        <!-- Timeframe 1M -->
+        <div class="timeframe-group">
+            <h3>1M</h3>
+            <textarea id="observacion1m" name="observacion1m" placeholder="Escribe observaciones para 1M..."></textarea>
+            <div class="img-preview" id="imgPreview1m"></div>
+            <input type="file" id="imagen1m" name="imagen1m" accept="image/*" style="display: none;">
+            <button type="button" class="remove-btn" id="removeImg1m">Eliminar Imagen</button>
+        </div>
+
+        <!-- Botón de Enviar -->
+        <button type="submit">Registrar Operativa</button>
+    </form>
+</div>
+
+<script th:src="@{/js/script-registro-operativa.js}"></script>
+</body>
+</html>
