@@ -14,7 +14,8 @@ import jakarta.persistence.Table;
 public class Inversion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private Long id;
+	private String emailUsuario;
     private String nombre;
     private String tipo; 
     private BigDecimal montoInvertido; 
@@ -131,5 +132,11 @@ public class Inversion {
 	public void setComentarios(String comentarios) {
 		this.comentarios = comentarios;
 	}
+	public String getEmailUsuario() {
+		return emailUsuario;
+	}
 
+	public void setEmailUsuario(String emailUsuario) {
+		this.emailUsuario = emailUsuario;
+	}
 }

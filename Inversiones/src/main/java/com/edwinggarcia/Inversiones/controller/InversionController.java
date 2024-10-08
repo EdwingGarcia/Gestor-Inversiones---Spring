@@ -3,6 +3,7 @@ package com.edwinggarcia.Inversiones.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +25,12 @@ public class InversionController {
 		this.inversionService = inversionService;
 	}
 
-	
+
 	@GetMapping("/listar")
 	public String listar(Model model) {
-		List<Inversion> inversiones = inversionService.listar();
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();  // Obtener el email del usuario autenticado
+		List<Inversion> inversiones = inversionService.listarInversionesPorUsuario(email);  // Filtrar por email
+		//List<Inversion> inversiones = inversionService.listar();  // Filtrar por email
 		model.addAttribute("inversiones", inversiones);
 		return "index";
 	}
@@ -40,6 +43,8 @@ public class InversionController {
 
 	@PostMapping("/guardar")
 	public String guardar(Inversion inversion) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();  // Obtener el email del usuario autenticado
+		inversion.setEmailUsuario(email);  // Asignar el email a la inversión
 		inversionService.guardar(inversion);
 		return "redirect:/inversiones/listar";
 	}

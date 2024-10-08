@@ -32,4 +32,7 @@ public class InversionService {
 	public void eliminar(Long id) {
 		inversionRepository.deleteById(id);
 	}
+	public List<Inversion> listarInversionesPorUsuario(String emailUsuario) {
+		return inversionRepository.findByEmailUsuario(emailUsuario);
+	}
 }
