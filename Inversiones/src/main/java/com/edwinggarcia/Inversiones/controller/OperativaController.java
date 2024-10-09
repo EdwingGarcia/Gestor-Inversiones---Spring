@@ -30,17 +30,12 @@ public class OperativaController {
     @PostMapping("/guardar")
     public String guardarOperativa(@ModelAttribute("operativa") Operativa operativa, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            // Si hay errores de validación, regresar a la vista del formulario
+
             return "registro-operativa";
         }
+        operativaService.guardar(operativa);
 
-        // Aquí deberías tener lógica para procesar los enlaces de imagen y las observaciones
-        // Asegúrate de que la entidad `Operativa` contenga los campos correspondientes para
-        // almacenar las observaciones y los enlaces de las imágenes.
-
-        operativaService.guardar(operativa); // Guarda la operativa en la base de datos a través del servicio
-
-        return "redirect:/inversiones/listar"; // Redirige a la lista de inversiones después de guardar
+        return "redirect:/inversiones/listar";
     }
 
 

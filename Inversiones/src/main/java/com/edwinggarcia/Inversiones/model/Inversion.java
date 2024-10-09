@@ -22,11 +22,8 @@ public class Inversion {
     private LocalDate fechaInversion; 
     private BigDecimal valorActual;
     private BigDecimal rendimiento; 
-    private LocalDate fechaVencimiento; 
-    private String riesgo; 
-    private String divisa; 
-    private String estado; 
-    private BigDecimal gananciasPerdidas; 
+    private LocalDate fechaVencimiento;
+    private String estado;
     private String comentarios; 
   
 	public Long getId() {
@@ -93,21 +90,6 @@ public class Inversion {
 		this.fechaVencimiento = fechaVencimiento;
 	}
 
-	public String getRiesgo() {
-		return riesgo;
-	}
-
-	public void setRiesgo(String riesgo) {
-		this.riesgo = riesgo;
-	}
-
-	public String getDivisa() {
-		return divisa;
-	}
-
-	public void setDivisa(String divisa) {
-		this.divisa = divisa;
-	}
 
 	public String getEstado() {
 		return estado;
@@ -115,14 +97,6 @@ public class Inversion {
 
 	public void setEstado(String estado) {
 		this.estado = estado;
-	}
-
-	public BigDecimal getGananciasPerdidas() {
-		return gananciasPerdidas;
-	}
-
-	public void setGananciasPerdidas(BigDecimal gananciasPerdidas) {
-		this.gananciasPerdidas = gananciasPerdidas;
 	}
 
 	public String getComentarios() {

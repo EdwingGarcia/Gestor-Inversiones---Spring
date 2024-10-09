@@ -33,11 +33,8 @@
                     <th>Fecha Inversión</th>
                     <th>Valor Actual</th>
                     <th>Rendimiento</th>
-                    <th>Fecha Vencimiento</th>
-                    <th>Riesgo(%)</th>
-                    <th>Divisa</th>
+                    <th>Fecha Inversion</th>
                     <th>Estado</th>
-                    <th>Ganancias/Pérdidas</th>
                     <th>Comentarios</th>
                     <th>Acciones</th>
                 </tr>
@@ -52,10 +49,7 @@
                     <td th:text="${inversion.valorActual}"></td>
                     <td th:text="${inversion.rendimiento}"></td>
                     <td th:text="${inversion.fechaVencimiento}"></td>
-                    <td th:text="${inversion.riesgo}"></td>
-                    <td th:text="${inversion.divisa}"></td>
                     <td th:text="${inversion.estado}"></td>
-                    <td th:text="${inversion.gananciasPerdidas}"></td>
                     <td th:text="${inversion.comentarios}"></td>
                     <td>
                         <a th:href="@{/inversiones/editar/{id}(id=${inversion.id})}" class="btn btn-warning">Editar</a>
