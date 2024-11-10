@@ -2,12 +2,9 @@ package com.edwinggarcia.Inversiones.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "inversion")
@@ -24,8 +21,9 @@ public class Inversion {
     private BigDecimal rendimiento; 
     private LocalDate fechaVencimiento;
     private String estado;
-    private String comentarios; 
-  
+    private String comentarios;
+
+
 	public Long getId() {
 		return id;
 	}

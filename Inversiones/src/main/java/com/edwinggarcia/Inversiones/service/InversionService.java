@@ -2,6 +2,8 @@ package com.edwinggarcia.Inversiones.service;
 
 import java.util.List;
 
+import com.edwinggarcia.Inversiones.model.Usuario;
+import com.edwinggarcia.Inversiones.repos.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +13,11 @@ import com.edwinggarcia.Inversiones.repos.InversionRepository;
 @Service
 public class InversionService {
 	private final InversionRepository inversionRepository;
-
+	private final UsuarioRepository usuarioRepository;
 	@Autowired
-	public InversionService(InversionRepository inversionRepository) {
+	public InversionService(InversionRepository inversionRepository,UsuarioRepository usuarioRepository) {
 		this.inversionRepository = inversionRepository;
+		this.usuarioRepository=usuarioRepository;
 	}
 
 	public List<Inversion> listar() {
@@ -33,8 +36,18 @@ public class InversionService {
 		inversionRepository.deleteById(id);
 	}
 
-	public List<Inversion> listarInversionesPorUsuario(String emailUsuario) {
+	public List<Inversion> listarInversionesPorEmail(String emailUsuario) {
 		return inversionRepository.findByEmailUsuario(emailUsuario);
+	}
+	public void agregarCorreoAUsuario(String emailUsuario, String correo) {
+		Usuario usuario = usuarioRepository.findByEmail(emailUsuario);
+
+		if (usuario != null) {
+			if (!usuario.getEmailsAsociados().contains(correo)) {
+				usuario.getEmailsAsociados().add(correo);
+				usuarioRepository.save(usuario);
+			}
+		}
 	}
 
 }

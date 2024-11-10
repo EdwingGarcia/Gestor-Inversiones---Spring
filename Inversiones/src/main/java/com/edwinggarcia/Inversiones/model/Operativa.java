@@ -20,7 +20,7 @@ public class Operativa {
     private String observacion1h; // Observación para 1H
     private String observacion15m; // Observación para 15M
     private String observacion5m;  // Observación para 5M
-    private String observacion1m;  // Observación para 1M
+    private String observacion1m;
     private String enlaceImagen4h;
     private String enlaceImagen1h;
     private String enlaceImagen15m;

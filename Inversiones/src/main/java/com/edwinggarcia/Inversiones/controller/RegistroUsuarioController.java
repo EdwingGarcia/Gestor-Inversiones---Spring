@@ -21,7 +21,7 @@ public class RegistroUsuarioController {
 		super();
 		this.usuarioServicio = usuarioServicio;
 	}
-	
+
 	@ModelAttribute("usuario")
 	public UsuarioRegistroDTO retornarNuevoUsuarioRegistroDTO() {
 		return new UsuarioRegistroDTO();
@@ -31,7 +31,7 @@ public class RegistroUsuarioController {
 	public String mostrarFormularioDeRegistro() {
 		return "registro";
 	}
-	
+
 	@PostMapping
 	public String registrarCuentaDeUsuario(@ModelAttribute("usuario") UsuarioRegistroDTO registroDTO) {
 		usuarioServicio.guardar(registroDTO);

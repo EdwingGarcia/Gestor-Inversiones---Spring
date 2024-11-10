@@ -1,6 +1,5 @@
 package com.edwinggarcia.Inversiones.controller.dto;
 
-
 public class UsuarioRegistroDTO {
 
 	private Long id;
@@ -8,6 +7,9 @@ public class UsuarioRegistroDTO {
 	private String apellido;
 	private String email;
 	private String password;
+	private boolean rolAuditor;
+
+	// Getters y Setters
 
 	public Long getId() {
 		return id;
@@ -50,16 +52,24 @@ public class UsuarioRegistroDTO {
 	}
 
 
-	public UsuarioRegistroDTO(String nombre, String apellido, String email, String password) {
-		super();
+
+	public UsuarioRegistroDTO(String nombre, String apellido, String email, String password, boolean rolAuditor) {
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.email = email;
 		this.password = password;
+		this.rolAuditor=rolAuditor;
 	}
 
 	public UsuarioRegistroDTO() {
+	}
+	// Getter para rolAuditor
 
+	public boolean isRolAuditor() {
+		return rolAuditor;  // Getter
 	}
 
+	public void setRolAuditor(boolean rolAuditor) {
+		this.rolAuditor = rolAuditor;  // Setter
+	}
 }

@@ -1,20 +1,9 @@
 package com.edwinggarcia.Inversiones.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-
+import java.util.List;
+import jakarta.persistence.*;
 @Entity
 @Table(name = "usuarios", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class Usuario {
@@ -31,11 +20,14 @@ public class Usuario {
 
 	private String email;
 	private String password;
+	private String rol;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "usuarios_roles", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "rol_id", referencedColumnName = "id"))
-	private Collection<Rol> roles;
+	@ElementCollection
+	@CollectionTable(name = "usuario_emails", joinColumns = @JoinColumn(name = "usuario_id"))
+	@Column(name = "email")
+	private List<String> emailsAsociados = new ArrayList<>();
 
+	// Getters y Setters
 	public Long getId() {
 		return id;
 	}
@@ -76,35 +68,39 @@ public class Usuario {
 		this.password = password;
 	}
 
-	public Collection<Rol> getRoles() {
-		return roles;
+	public String getRol() {
+		return rol;
 	}
 
-	public void setRoles(Collection<Rol> roles) {
-		this.roles = roles;
+	public void setRol(String rol) {
+		this.rol = rol;
 	}
 
-	public Usuario(Long id, String nombre, String apellido, String email, String password, Collection<Rol> roles) {
-		super();
+	public List<String> getEmailsAsociados() {
+		return emailsAsociados;
+	}
+
+	public void setEmailsAsociados(List<String> emailsAsociados) {
+		this.emailsAsociados = emailsAsociados;
+	}
+
+	public Usuario(String apellido, String email, List<String> emailsAsociados, Long id, String nombre, String password, String rol) {
+		this.apellido = apellido;
+		this.email = email;
+		this.emailsAsociados = emailsAsociados;
 		this.id = id;
 		this.nombre = nombre;
-		this.apellido = apellido;
-		this.email = email;
 		this.password = password;
-		this.roles = roles;
+		this.rol = rol;
 	}
 
-	public Usuario(String nombre, String apellido, String email, String password, Collection<Rol> roles) {
-		super();
+	public Usuario(String nombre, String apellido, String email, String password, String rol) {
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.email = email;
 		this.password = password;
-		this.roles = roles;
+		this.rol = rol;
 	}
 
-	public Usuario() {
-
-	}
-
+	public Usuario() {}
 }
