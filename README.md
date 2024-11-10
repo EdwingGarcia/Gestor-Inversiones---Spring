@@ -41,6 +41,10 @@ Este proyecto es una aplicación web desarrollada con Spring Boot que incluye un
 /registro (GET): Muestra el formulario de registro para crear una nueva cuenta de usuario.
 /registro (POST): Procesa el formulario de registro y guarda la nueva cuenta de usuario. Redirige al formulario con un mensaje de éxito si el registro es exitoso.
 
+**Roles y Acceso
+Los roles están definidos en una propiedad de Usuario, donde cada uno tiene accesos diferentes determinados en la Seguridad en el directorio Config> SecurityConfiguration
+Los AUDITORES tienen acceso a todas las inversiones de sus clientes en modo espectador, mientras que solo los USUARIOS son capaces de alterar las inversiones
+
 ## Contribuciones
 Las contribuciones son bienvenidas. Si deseas contribuir, por favor abre un "issue" o un "pull request".
 
