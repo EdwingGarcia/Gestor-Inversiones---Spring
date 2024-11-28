@@ -21,7 +21,7 @@ public class Inversion {
     private BigDecimal montoInvertido; 
     private LocalDate fechaInversion; 
     private BigDecimal valorActual;
-    private BigDecimal rendimiento; 
+    private BigDecimal rendimiento;
     private LocalDate fechaVencimiento;
     private String estado;
     private String comentarios; 

@@ -1,15 +1,14 @@
 package com.edwinggarcia.Inversiones.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.edwinggarcia.Inversiones.model.Inversion;
 import com.edwinggarcia.Inversiones.service.InversionService;
@@ -34,12 +33,34 @@ public class InversionController {
 		model.addAttribute("inversiones", inversiones);
 		return "index";
 	}
-
 	@GetMapping("/agregar")
 	public String mostrarFormularioAgregar(Model model) {
 		model.addAttribute("inversion", new Inversion());
 		return "formulario-agregar";
+
 	}
+
+	@GetMapping("/comparativa")
+	public String mostrarComparativa() {
+		return "comparativa";
+	}
+	@GetMapping("/filtrar")
+	public String filtrarInversiones(
+	@RequestParam String fechaInicio,
+	@RequestParam String fechaFin,
+	Model model) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		LocalDate inicio = LocalDate.parse(fechaInicio);
+		LocalDate fin = LocalDate.parse(fechaFin);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String inicioFormateado = inicio.format(formatter);
+		String finFormateado = fin.format(formatter);
+		List<Inversion> inversiones = inversionService.listarInversionesPorRangoFechas(email, inicio, fin);
+		model.addAttribute("inversiones", inversiones);
+		model.addAttribute("fechaInicio", inicioFormateado);
+		model.addAttribute("fechaFin", finFormateado);
+
+		return "comparativa";}
 
 	@PostMapping("/guardar")
 	public String guardar(Inversion inversion) {

@@ -1,5 +1,6 @@
 package com.edwinggarcia.Inversiones.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class InversionService {
 
 	public List<Inversion> listarInversionesPorUsuario(String emailUsuario) {
 		return inversionRepository.findByEmailUsuario(emailUsuario);
+	}
+	public List<Inversion> listarInversionesPorRangoFechas(String emailUsuario, LocalDate fechaInicio, LocalDate fechaFin) {
+		return inversionRepository.findByEmailUsuarioAndFechaInversionBetween(emailUsuario, fechaInicio, fechaFin);
 	}
 
 }
