@@ -17,19 +17,27 @@
 
             <div class="form-group">
                 <label for="tipo">Tipo</label>
-                <select id="tipo" name="tipo" required th:field="*{tipo}">
-                    <option value="Renta Fija">Renta Fija</option>
-                    <option value="Renta Variable">Renta Variable</option>
-                    <option value="Fondos de Inversión">Fondos de Inversión</option>
-                    <option value="Cryptos">Cryptos</option>
-                    <option value="otros">otros</option>
+                <select id="tipo" name="tipo" class="form-control" required>
+                    <option value="" disabled selected>Selecciona un Tipo</option>
+                    <option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo}"></option>
                 </select>
             </div>
 
             <div class="form-group">
+                <label for="activo">Activo</label>
+                <select id="activo" name="activoSimbolo" class="form-control" required>
+                    <option value="" disabled selected>Selecciona un Activo</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="montoInvertido">Monto Invertido ($)</label>
                 <input type="number" step="0.01" id="montoInvertido" th:field="*{montoInvertido}" class="form-control" required />
             </div>
+        </div>
+        <div class="form-group">
+                <label for="precioInversion">Precio de Inversión ($)</label>
+                <input type="number" step="0.01" id="precioInversion" th:field="*{precioInversion}" class="form-control" required />
+
         </div>
 
         <div class="form-row">
@@ -38,22 +46,30 @@
                 <input type="date" id="fechaInversion" th:field="*{fechaInversion}" class="form-control" />
             </div>
 
+            <select id="broker" name="brokerNombre" class="form-control" required>
+                <option value="" disabled selected>Selecciona un Broker</option>
+                <option th:each="broker : ${brokers}" th:value="${broker.nombre}" th:text="${broker.nombre}">
+                </option>
+            </select>
+
             <div class="form-group">
-                <label for="estado">Estado</label>
-                <select id="estado" name="estado" required th:field="*{estado}">
-                    <option value="activo">ACTIVO</option>
-                    <option value="programado">PROGRAMADO</option>
-                    <option value="inactivo">INACTIVO</option>
+                <label for="estrategia">Estrategia</label>
+                <select id="estrategia" name="estrategiaNombre" class="form-control" required>
+                    <option value="" disabled selected>Selecciona una Estrategia</option>
+                    <option th:each="estrategia : ${estrategias}" th:value="${estrategia.nombre}" th:text="${estrategia.nombre}">
+                    </option>
                 </select>
             </div>
-        </div>
+
+
+
+
 
         <div class="form-group">
             <label for="comentarios">Comentarios</label>
             <textarea id="comentarios" th:field="*{comentarios}" class="form-control"></textarea>
         </div>
 
-        <!-- Contenedor de botones -->
         <div class="form-group button-group">
             <button type="submit" class="btn btn-primary">Agregar Inversión</button>
             <a href="/inversiones/listar" class="btn btn-secondary">Cancelar</a>
@@ -61,10 +77,11 @@
     </form>
 </div>
 
-<!-- Optional JavaScript -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script th:src="@{/js/script-formulario-agregar.js}"></script>
+<script th:src="@{/js/script-activos.js}"></script>
+
 </body>
 </html>

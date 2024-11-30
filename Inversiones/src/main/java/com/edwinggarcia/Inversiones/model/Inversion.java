@@ -3,35 +3,51 @@ package com.edwinggarcia.Inversiones.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "inversion")
 public class Inversion {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
 	private String emailUsuario;
-    private String nombre;
-    private String tipo; 
-    private BigDecimal montoInvertido; 
-    private LocalDate fechaInversion; 
-    private BigDecimal valorActual;
-    private BigDecimal rendimiento;
-    private LocalDate fechaVencimiento;
-    private String estado;
-    private String comentarios; 
-  
+	private String nombre;
+	private String tipo;
+	private double montoInvertido;
+	private LocalDate fechaInversion;
+	private String estado;
+	private String comentarios;
+	private double precioInversion;
+
+	@ManyToOne
+	@JoinColumn(name = "broker_id", nullable = false)
+	private Broker broker;
+
+	@ManyToOne
+	@JoinColumn(name = "estrategia_id", nullable = false)
+	private Estrategia estrategia;
+
+	@ManyToOne
+	@JoinColumn(name = "activo_id", nullable = false)
+	private Activo activo;
+
+	// Getters y Setters
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getEmailUsuario() {
+		return emailUsuario;
+	}
+
+	public void setEmailUsuario(String emailUsuario) {
+		this.emailUsuario = emailUsuario;
 	}
 
 	public String getNombre() {
@@ -50,11 +66,19 @@ public class Inversion {
 		this.tipo = tipo;
 	}
 
-	public BigDecimal getMontoInvertido() {
+	public double getMontoInvertido() {
 		return montoInvertido;
 	}
 
-	public void setMontoInvertido(BigDecimal montoInvertido) {
+	public double getPrecioInversion() {
+		return precioInversion;
+	}
+
+	public void setPrecioInversion(double precioInversion) {
+		this.precioInversion = precioInversion;
+	}
+
+	public void setMontoInvertido(double montoInvertido) {
 		this.montoInvertido = montoInvertido;
 	}
 
@@ -64,30 +88,6 @@ public class Inversion {
 
 	public void setFechaInversion(LocalDate fechaInversion) {
 		this.fechaInversion = fechaInversion;
-	}
-
-	public BigDecimal getValorActual() {
-		return valorActual;
-	}
-
-	public void setValorActual(BigDecimal valorActual) {
-		this.valorActual = valorActual;
-	}
-
-	public BigDecimal getRendimiento() {
-		return rendimiento;
-	}
-
-	public void setRendimiento(BigDecimal rendimiento) {
-		this.rendimiento = rendimiento;
-	}
-
-	public LocalDate getFechaVencimiento() {
-		return fechaVencimiento;
-	}
-
-	public void setFechaVencimiento(LocalDate fechaVencimiento) {
-		this.fechaVencimiento = fechaVencimiento;
 	}
 
 
@@ -106,11 +106,28 @@ public class Inversion {
 	public void setComentarios(String comentarios) {
 		this.comentarios = comentarios;
 	}
-	public String getEmailUsuario() {
-		return emailUsuario;
+
+	public Broker getBroker() {
+		return broker;
 	}
 
-	public void setEmailUsuario(String emailUsuario) {
-		this.emailUsuario = emailUsuario;
+	public void setBroker(Broker broker) {
+		this.broker = broker;
+	}
+
+	public Estrategia getEstrategia() {
+		return estrategia;
+	}
+
+	public void setEstrategia(Estrategia estrategia) {
+		this.estrategia = estrategia;
+	}
+
+	public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
 	}
 }

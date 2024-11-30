@@ -4,50 +4,65 @@
     <title>Lista de Inversiones</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/inversiones/listar">Sistema de Inversiones</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav ml-auto">
+            <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}" class="nav-link">Cerrar sesión</a></li>
+        </ul>
+    </div>
+</nav>
 
 <div class="container mt-4">
     <h1>Lista de Inversiones</h1>
     <div class="d-flex justify-content-between mb-3">
         <a href="/inversiones/agregar" class="btn btn-primary">Agregar Nueva Inversión</a>
-        <a href="/inversiones/comparativa" class="btn btn-success btn-lg">Comparativa de Datos</a>
+        <a href="/inversiones/comparativa" class="btn btn-success">Comparativa de Datos</a>
     </div>
-    <table class="table table-bordered">
-        <thead class="thead-light">
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Monto Invertido($)</th>
-            <th>Fecha Inversión</th>
-            <th>Valor Actual ($)</th>
-            <th>Estado</th>
-            <th>Comentarios</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="inversion : ${inversiones}">
-            <td th:text="${inversion.id}"></td>
-            <td th:text="${inversion.nombre}"></td>
-            <td th:text="${inversion.tipo}"></td>
-            <td th:text="${inversion.montoInvertido}"></td>
-            <td th:text="${inversion.fechaInversion}"></td>
-            <td th:text="${inversion.valorActual}"></td>
-            <td th:text="${inversion.estado}"></td>
-            <td th:text="${inversion.comentarios}"></td>
-            <td class="action-icons">
-                <a th:href="@{/inversiones/editar/{id}(id=${inversion.id})}" class="btn btn-link p-0">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <a th:href="@{/inversiones/eliminar/{id}(id=${inversion.id})}" class="btn btn-link text-danger p-0" style="margin-left: 10px;">
-                    <i class="fas fa-trash-alt"></i>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="table-container">
+        <div class="table-wrapper">
+            <h2>Inversiones Activas</h2>
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Monto Invertido($)</th>
+                    <th>Fecha Inversión</th>
+                    <th>Estado</th>
+                    <th>Comentarios</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="inversion : ${inversiones}">
+                    <td th:text="${inversion.id}"></td>
+                    <td th:text="${inversion.nombre}"></td>
+                    <td th:text="${inversion.tipo}"></td>
+                    <td th:text="${inversion.montoInvertido}"></td>
+                    <td th:text="${inversion.fechaInversion}"></td>
+                    <td th:text="${inversion.estado}"></td>
+                    <td th:text="${inversion.comentarios}"></td>
+                    <td class="action-icons">
+                        <a th:href="@{/inversiones/editar/{id}(id=${inversion.id})}" class="btn btn-link p-0">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a th:href="@{/inversiones/eliminar/{id}(id=${inversion.id})}" class="btn btn-link text-danger p-0" style="margin-left: 10px;">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

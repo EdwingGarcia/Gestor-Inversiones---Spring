@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cuentas Auditadas</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+<!-- Barra de navegación -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Cuentas Auditadas</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Cerrar sesión</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2>CUENTAS AUDITADAS</h2>
+    <!-- Formulario para agregar correo -->
+    <form action="#" th:action="@{/inversiones/agregarCorreo}" method="post">
+        <div class="form-group">
+            <label for="correo">Correo Electrónico:</label>
+            <input type="email" id="correo" name="correo" class="form-control" placeholder="Ingresa el correo" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar Correo</button>
+    </form>
+    <form action="#" th:action="@{/inversiones/listar}" method="get">
+        <div class="form-group">
+            <label for="emailsAsociados">Seleccionar Correo Asociado:</label>
+            <select id="emailsAsociados" name="email" class="form-control">
+                <option value="" disabled selected>Selecciona un correo</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
+
+
+    <!-- Tabla de inversiones -->
+    <table class="table table-bordered mt-4">
+        <thead class="thead-light">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Monto Invertido($)</th>
+            <th>Fecha Inversión</th>
+            <th>Estado</th>
+            <th>Comentarios</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="inversion : ${inversiones}">
+            <td th:text="${inversion.id}"></td>
+            <td th:text="${inversion.nombre}"></td>
+            <td th:text="${inversion.tipo}"></td>
+            <td th:text="${inversion.montoInvertido}"></td>
+            <td th:text="${inversion.fechaInversion}"></td>
+            <td th:text="${inversion.estado}"></td>
+            <td th:text="${inversion.comentarios}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/inversiones/emailsAsociados')
+            .then(response => response.json())
+            .then(data => {
+                const emailSelect = document.getElementById('emailsAsociados');
+                data.forEach(email => {
+                    const option = document.createElement('option');
+                    option.value = email;
+                    option.textContent = email;
+                    emailSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar los correos:', error));
+    });
+</script>
+</body>
+</html>
