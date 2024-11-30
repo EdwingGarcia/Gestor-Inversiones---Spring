@@ -1,20 +1,3 @@
-# Usa una imagen base con Maven y OpenJDK 21
 FROM maven:3.8.6-openjdk-21-slim AS builder
-
-# Establece el directorio de trabajo
-WORKDIR /Inversiones
-
-# Copia los archivos del proyecto al contenedor
-COPY . /Inversiones
-
-# Ejecuta el build con Maven
-RUN mvn clean package -DskipTests
-
-# Usa una imagen más ligera para correr la aplicación
-FROM openjdk:21-jre-slim
-
-# Copia el archivo JAR generado desde la imagen builder
-COPY --from=builder /Inversiones/target/Inversiones-0.0.1-SNAPSHOT.jar /app.jar
-
-# Define el comando para ejecutar la app
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+COPY target/Inversiones-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ['java','-jar','/app.jar']
