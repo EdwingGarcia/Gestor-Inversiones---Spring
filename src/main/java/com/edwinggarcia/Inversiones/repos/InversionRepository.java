@@ -12,4 +12,5 @@ public interface InversionRepository extends JpaRepository<Inversion, Long> {
     List<Inversion> findByEmailUsuario(String emailUsuario);
     List<Inversion> findByEmailUsuarioAndFechaInversionBetween(String emailUsuario, LocalDate fechaInicio, LocalDate fechaFin);
     List<Inversion> findByEmailUsuarioAndBroker(String emailUsuario, Broker broker);
+    List<Inversion> findByFechaInversionBetween(LocalDate fechaInicio, LocalDate fechaFin);
 }

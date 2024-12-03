@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.edwinggarcia.Inversiones.controller.dto.BrokerGananciaDTO;
 import com.edwinggarcia.Inversiones.controller.dto.ComparativaDTO;
+import com.edwinggarcia.Inversiones.controller.dto.TendenciasDTO;
 import com.edwinggarcia.Inversiones.model.Activo;
 import com.edwinggarcia.Inversiones.model.Usuario;
 import com.edwinggarcia.Inversiones.repos.UsuarioRepository;
@@ -85,6 +87,8 @@ public class InversionController {
 
 	@GetMapping("/comparativa")
 	public String mostrarComparativa(Model model) {
+		String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+		TendenciasDTO tendenciasDTO = inversionService.obtenerTendenciasInversionesGlobales();
 		ComparativaDTO comparativaDTO = new ComparativaDTO();
 		comparativaDTO.setSumaMontosInvertidosPrimeraLista(0.0);
 		comparativaDTO.setGananciasConComisionPrimeraLista(0.0);
@@ -92,9 +96,10 @@ public class InversionController {
 		comparativaDTO.setGananciasConComisionSegundaLista(0.0);
 		comparativaDTO.setTipoMasRentablePrimeraLista(Collections.emptyList());
 		comparativaDTO.setTipoMasRentableSegundaLista(Collections.emptyList());
-		model.addAttribute("estrategiasMasRentablesPorTipo", inversionService.obtenerEstrategiaMasRentablePorCadaTipo());
-		model.addAttribute("activosMasRentablesPorCadaTipoListaGeneral", inversionService.obtenerActivosMasRentablesPorCadaTipo());
+		model.addAttribute("estrategiasMasRentablesPorTipo", inversionService.obtenerEstrategiaMasRentablePorCadaTipo(emailUsuario));
+		model.addAttribute("activosMasRentablesPorCadaTipoListaGeneral", inversionService.obtenerActivosMasRentablesPorCadaTipo(emailUsuario));
 		model.addAttribute("comparativadto", comparativaDTO);
+		model.addAttribute("tendenciasdto", tendenciasDTO);
 
 		return "comparativa"; // Nombre de la vista HTML
 	}
@@ -106,19 +111,24 @@ public class InversionController {
 			@RequestParam(required = false) String fechaFin1,
 			@RequestParam(required = false) String fechaInicio2,
 			@RequestParam(required = false) String fechaFin2,
-			Model model) {
 
+			Model model) {
+		TendenciasDTO tendenciasDTO = inversionService.obtenerTendenciasInversionesGlobales();
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		LocalDate inicio1 = (fechaInicio1 != null && !fechaInicio1.isEmpty()) ? LocalDate.parse(fechaInicio1) : null;
 		LocalDate fin1 = (fechaFin1 != null && !fechaFin1.isEmpty()) ? LocalDate.parse(fechaFin1) : null;
 		LocalDate inicio2 = (fechaInicio2 != null && !fechaInicio2.isEmpty()) ? LocalDate.parse(fechaInicio2) : null;
 		LocalDate fin2 = (fechaFin2 != null && !fechaFin2.isEmpty()) ? LocalDate.parse(fechaFin2) : null;
+		List<BrokerGananciaDTO> brokerGananciaDTO=inversionService.obtenerGananciasComisionDeCadaBrokerPorFecha(inicio1,fin1);
 		List<Inversion> inversionesTabla1 = inversionService.listarInversionesPorRangoFechas(email, inicio1, fin1);
 		List<Inversion> inversionesTabla2 = inversionService.listarInversionesPorRangoFechas(email, inicio2, fin2);
 		ComparativaDTO comparativadto = inversionService.compararTablasInversionesPorFechas(
 				inversionesTabla1 != null ? inversionesTabla1 : Collections.emptyList(),
 				inversionesTabla2 != null ? inversionesTabla2 : Collections.emptyList()
 		);
+		model.addAttribute("listaBrokerdto", brokerGananciaDTO);
+		System.out.println("Lista Broker DTO: " + brokerGananciaDTO);
+		model.addAttribute("tendenciasdto", tendenciasDTO);
 		model.addAttribute("comparativadto", comparativadto);
 		model.addAttribute("inversionesTabla1", inversionesTabla1);
 		model.addAttribute("inversionesTabla2", inversionesTabla2);
@@ -126,8 +136,8 @@ public class InversionController {
 		model.addAttribute("fechaFin1", fechaFin1);
 		model.addAttribute("fechaInicio2", fechaInicio2);
 		model.addAttribute("fechaFin2", fechaFin2);
-		model.addAttribute("estrategiasMasRentablesPorTipo", inversionService.obtenerEstrategiaMasRentablePorCadaTipo());
-		model.addAttribute("activosMasRentablesPorCadaTipoListaGeneral", inversionService.obtenerActivosMasRentablesPorCadaTipo());
+		model.addAttribute("estrategiasMasRentablesPorTipo", inversionService.obtenerEstrategiaMasRentablePorCadaTipo(email));
+		model.addAttribute("activosMasRentablesPorCadaTipoListaGeneral", inversionService.obtenerActivosMasRentablesPorCadaTipo(email));
 		return "comparativa";
 	}
 
@@ -175,5 +185,6 @@ public class InversionController {
 		String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
 		return inversionService.obtenerEmailsAsociados(emailUsuario);
 	}
+
 
 }

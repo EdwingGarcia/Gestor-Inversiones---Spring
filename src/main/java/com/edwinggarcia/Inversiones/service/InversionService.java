@@ -1,10 +1,13 @@
 package com.edwinggarcia.Inversiones.service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.edwinggarcia.Inversiones.controller.dto.BrokerGananciaDTO;
 import com.edwinggarcia.Inversiones.controller.dto.ComparativaDTO;
+import com.edwinggarcia.Inversiones.controller.dto.TendenciasDTO;
 import com.edwinggarcia.Inversiones.model.*;
 import com.edwinggarcia.Inversiones.repos.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,8 +137,6 @@ public class InversionService {
 		}
 
 
-
-
 		double rentabilidadMaxima = rentabilidadPorTipo.values().stream()
 				.max(Double::compare)
 				.orElse(0.0);
@@ -147,38 +148,28 @@ public class InversionService {
 
 		return tiposYNombresMasRentables;
 	}
-	public Map<String, String> obtenerActivosMasRentablesPorCadaTipo() {
-		List<Inversion> lista = inversionRepository.findAll();
 
-		// Mapa para agrupar inversiones por tipo
+	public Map<String, String> obtenerActivosMasRentablesPorCadaTipo(String email) {
+		List<Inversion> lista = inversionRepository.findByEmailUsuario(email);
 		Map<String, List<Inversion>> inversionesPorTipo = new HashMap<>();
 		for (Inversion i : lista) {
 			String tipo = i.getTipo();
 			inversionesPorTipo.computeIfAbsent(tipo, k -> new ArrayList<>()).add(i);
 		}
-
-		// Mapa para almacenar los activos más rentables por tipo
 		Map<String, String> activosMasRentablesPorTipo = new HashMap<>();
-
-		// Iterar sobre cada tipo de inversión
 		for (Map.Entry<String, List<Inversion>> entry : inversionesPorTipo.entrySet()) {
 			String tipo = entry.getKey();
 			List<Inversion> inversiones = entry.getValue();
 			Inversion inversionMasRentable = null;
 			double rentabilidadMaxima = Double.MIN_VALUE;
 
-			// Iterar sobre las inversiones de ese tipo
 			for (Inversion i : inversiones) {
 				double precioActual = i.getActivo().getPrecioActual();
 				double precioInversion = i.getPrecioInversion();
 				double montoInvertido = i.getMontoInvertido();
 
-				// Verificar que los valores sean válidos para evitar errores
 				if (precioActual > 0 && precioInversion > 0 && montoInvertido > 0) {
-					// Calcular rentabilidad del activo
 					double rentabilidad = (precioActual - precioInversion) * (montoInvertido / precioInversion);
-
-					// Si encontramos una rentabilidad mayor, actualizamos la máxima
 					if (rentabilidad > rentabilidadMaxima) {
 						rentabilidadMaxima = rentabilidad;
 						inversionMasRentable = i;
@@ -186,16 +177,14 @@ public class InversionService {
 				}
 			}
 
-			// Si solo hay una inversión registrada, asignarla como el activo más rentable
+			// Si es primera inversion se asigna
 			if (inversionMasRentable == null && inversiones.size() == 1) {
 				inversionMasRentable = inversiones.get(0);
 			}
 
-			// Si se encontró una inversión rentable, agregamos el símbolo del activo
 			if (inversionMasRentable != null) {
 				activosMasRentablesPorTipo.put(tipo, inversionMasRentable.getActivo().getSimbolo());
 			} else {
-				// Si no hay inversiones rentables, agregar tipo con mensaje de no rentable
 				activosMasRentablesPorTipo.put(tipo, "Sin activos rentables");
 			}
 		}
@@ -205,8 +194,8 @@ public class InversionService {
 	}
 
 
-	public Map<String, String> obtenerEstrategiaMasRentablePorCadaTipo() {
-		List<Inversion> lista = inversionRepository.findAll();
+	public Map<String, String> obtenerEstrategiaMasRentablePorCadaTipo(String email) {
+		List<Inversion> lista = inversionRepository.findByEmailUsuario(email);
 
 		// Mapa para agrupar inversiones por tipo
 		Map<String, List<Inversion>> inversionesPorTipo = new HashMap<>();
@@ -284,8 +273,8 @@ public class InversionService {
 		Usuario usuario = usuarioRepository.findByEmail(emailUsuario);
 		Usuario usuarioAsociado = usuarioRepository.findByEmail(correo);
 
-		if (usuario != null && usuarioAsociado != null) { // Ambos usuarios deben existir
-			if (!usuario.getEmailsAsociados().contains(correo)) { // El correo no debe estar ya asociado
+		if (usuario != null && usuarioAsociado != null) {
+			if (!usuario.getEmailsAsociados().contains(correo)) {
 				usuario.getEmailsAsociados().add(correo);
 				usuarioRepository.save(usuario);
 			}
@@ -303,7 +292,92 @@ public class InversionService {
 		if (usuario != null && usuario.getEmailsAsociados().contains(correoAsociado)) {
 			return inversionRepository.findByEmailUsuario(correoAsociado);
 		}
-		return Collections.emptyList(); // Si no se encuentra o no está asociado, retornar una lista vacía
+		return Collections.emptyList();
+	}
+
+	public TendenciasDTO obtenerTendenciasInversionesGlobales() {
+		List<Inversion> inversionesTodosUsuarios = inversionRepository.findAll();
+
+		LocalDate fechaLimite = LocalDate.now().minus(3, ChronoUnit.MONTHS);
+
+		// Filtrar las inversiones que fueron realizadas en los últimos 3 meses
+		List<Inversion> inversionesUltimosTresMeses = inversionesTodosUsuarios.stream()
+				.filter(inversion -> inversion.getFechaInversion().isAfter(fechaLimite))
+				.collect(Collectors.toList());
+
+		// Listas para almacenar los datos
+		List<String> estrategias = new ArrayList<>();
+		List<String> activos = new ArrayList<>();
+		List<String> tiposInversion = new ArrayList<>();
+
+		// Extraer datos de las inversiones
+		for (Inversion inversion : inversionesUltimosTresMeses) {
+			estrategias.add(inversion.getEstrategia().toString());
+			activos.add(inversion.getActivo().toString());
+			tiposInversion.add(inversion.getActivo().getTipo());
+		}
+
+		// Obtener el Top 5 de estrategias más comunes
+		List<String> topEstrategias = obtenerTopFrecuencias(estrategias, inversionesUltimosTresMeses.size());
+
+		// Obtener el Top 5 de activos más invertidos
+		List<String> topActivos = obtenerTopFrecuencias(activos, inversionesUltimosTresMeses.size());
+
+		// Obtener el tipo de activo más invertido
+		String topTipoActivo = obtenerTopFrecuenciaUnica(tiposInversion);
+
+		// Crear TendenciasDTO y establecer los valores usando los métodos set
+		TendenciasDTO tendenciasDTO = new TendenciasDTO();
+		tendenciasDTO.setTopEstrategias(topEstrategias);
+		tendenciasDTO.setTopActivos(topActivos);
+		tendenciasDTO.setTopTipoActivo(topTipoActivo);
+
+		return tendenciasDTO;
+	}
+
+
+	private List<String> obtenerTopFrecuencias(List<String> items, int total) {
+		return items.stream()
+				.collect(Collectors.groupingBy(item -> item, Collectors.counting()))
+				.entrySet().stream()
+				.sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Orden descendente por valor
+				.limit(5) // Tomar el Top 5
+				.map(entry -> entry.getKey() + " (" + String.format("%.2f", (entry.getValue() * 100.0 / total)) + "%)") // Calcular porcentaje
+				.toList();
+	}
+
+	private String obtenerTopFrecuenciaUnica(List<String> items) {
+		return items.stream()
+				.collect(Collectors.groupingBy(item -> item, Collectors.counting()))
+				.entrySet().stream()
+				.max(Comparator.comparingLong(Map.Entry::getValue))
+				.map(entry -> entry.getKey())
+				.orElse("No disponible");
+	}
+
+	public List<BrokerGananciaDTO> obtenerGananciasComisionDeCadaBrokerPorFecha(LocalDate fechaInicioLocal, LocalDate fechaFinLocal) {
+		List<Inversion> inversiones = inversionRepository.findByFechaInversionBetween(fechaInicioLocal, fechaFinLocal);
+		Map<String, Double> gananciasPorBroker = inversiones.stream()
+				.collect(Collectors.groupingBy(
+						inversion -> inversion.getBroker().getNombre(),
+						Collectors.summingDouble(inversion -> calcularGananciaComision(inversion))
+				));
+
+		return gananciasPorBroker.entrySet().stream()
+				.map(entry -> {
+					BrokerGananciaDTO dto = new BrokerGananciaDTO();
+					dto.setBrokerNombre(entry.getKey());
+					dto.setGananciasComision(entry.getValue());
+					return dto;
+				})
+				.collect(Collectors.toList());
+	}
+
+	private double calcularGananciaComision(Inversion inversion) {
+		double precioActual = inversion.getActivo().getPrecioActual();
+		double precioInversion = inversion.getPrecioInversion();
+		double montoInvertido = inversion.getMontoInvertido();
+		return (precioActual  * (montoInvertido / precioInversion) - montoInvertido)*inversion.getBroker().getComisionPorcentaje();
 	}
 
 

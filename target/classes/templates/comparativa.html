@@ -149,6 +149,25 @@
 
                     </p>
                 </div>
+                <label><strong>Comisiones Broker:</strong></label>
+
+                <table class="table table-bordered mt-4">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>Broker</th>
+                        <th>Ganancia por Comisión ($)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="broker : ${listaBrokerdto}">
+                        <td th:text="${broker.brokerNombre}"></td>
+                        <td th:text="${#numbers.formatDecimal(broker.gananciasComision, 2, 2)}"><p>$/p>></td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
             </div>
 
             <!-- Tabla 2 -->
@@ -205,7 +224,7 @@
         <!-- Cuadro de "En qué debería invertir" -->
         <div class="col-md-6">
             <div class="table-wrapper">
-                <h2>¿En qué debería invertir?</h2>
+                <h2>Tus Preferencias de Inversión</h2>
                 <p>Analiza tu perfil de riesgo y objetivos financieros antes de tomar una decisión.Estos son los mejores activos para invertir segun la categoria de tu eleccion </p>
                 <div class="table-wrapper">
                     <table class="table">
@@ -231,7 +250,7 @@
         <!-- Cuadro de "Qué estrategia debería usar" -->
         <div class="col-md-6">
             <div class="table-wrapper">
-                <h2>¿Qué estrategia debería usar?</h2>
+                <h2>Estrategias Preferidas</h2>
                 <p>Basada en tus ganancias, considera las siguientes estrategias:</p>
                 <table class="table">
                     <thead>
@@ -255,6 +274,59 @@
         </div>
     </div>
 </div>
+
+<!-- Cuadro inferior: Tendencias de Inversión -->
+<div class="col-12 mt-5">
+    <div class="table-wrapper p-4" style="background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+        <h2 class="text-center text-primary">Tendencias de Inversión</h2>
+        <p class="text-center text-muted">
+            Aquí puedes analizar las tendencias más relevantes en el mercado de inversiones, incluyendo los sectores con mayor crecimiento y las estrategias más populares.
+        </p>
+
+        <div class="row">
+            <!-- Columna de Estrategias Más Populares -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5>Top 5 Estrategias</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li th:each="estrategia : ${tendenciasdto.topEstrategias}" th:text="${estrategia}" class="mb-2"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna de Activos Más Populares -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5>Top 5 Activos</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li th:each="activo : ${tendenciasdto.topActivos}" th:text="${activo}" class="mb-2"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna de Tipo de Activo Más Popular -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5>Tipo de Activo Más Popular</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p th:text="${tendenciasdto.topTipoActivo}" class="lead text-muted"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div><!-- Cuadro inferior: Tendencias de Inversión -->
 
 
 </div>

@@ -31,24 +31,26 @@
             <table class="table table-bordered">
                 <thead class="thead-light">
                 <tr>
-                    <th>ID</th>
+                    <th>Broker</th>
                     <th>Nombre</th>
                     <th>Tipo</th>
+                    <th>Activo</th>
                     <th>Monto Invertido($)</th>
+                    <th>Precio Entrada($)</th>
                     <th>Fecha Inversión</th>
-                    <th>Estado</th>
                     <th>Comentarios</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="inversion : ${inversiones}">
-                    <td th:text="${inversion.id}"></td>
+                    <td th:text="${inversion.broker.nombre}"></td>
                     <td th:text="${inversion.nombre}"></td>
                     <td th:text="${inversion.tipo}"></td>
+                    <td th:text="${inversion.activo.simbolo}"></td>
                     <td th:text="${inversion.montoInvertido}"></td>
+                    <td th:text="${inversion.precioInversion}"></td>
                     <td th:text="${inversion.fechaInversion}"></td>
-                    <td th:text="${inversion.estado}"></td>
                     <td th:text="${inversion.comentarios}"></td>
                     <td class="action-icons">
                         <a th:href="@{/inversiones/editar/{id}(id=${inversion.id})}" class="btn btn-link p-0">

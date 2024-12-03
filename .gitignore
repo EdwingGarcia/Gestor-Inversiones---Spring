@@ -1,6 +1,6 @@
-# Ignora archivos generados y directorios específicos de herramientas
+HELP.md
 
-# Spring Tool Suite (STS)
+### STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -9,13 +9,13 @@
 .springBeans
 .sts4-cache
 
-# IntelliJ IDEA
+### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 
-# NetBeans
+### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -25,8 +25,5 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# Visual Studio Code
+### VS Code ###
 .vscode/
-
-# Otros
-HELP.md

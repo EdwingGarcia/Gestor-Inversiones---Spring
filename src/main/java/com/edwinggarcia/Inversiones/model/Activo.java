@@ -58,5 +58,8 @@ public class Activo {
         this.precioActual = precioActual;
     }
 
-
+    @Override
+    public String toString() {
+        return simbolo;  // Devuelve el símbolo del activo
+    }
 }

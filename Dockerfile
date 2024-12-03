@@ -1,20 +1,32 @@
-# Usa una imagen base con Maven y OpenJDK 11
-FROM maven:3.8.6-openjdk-11-slim AS builder
+# Usamos una imagen base con Java 17
+FROM openjdk:17-jdk-slim as build
 
-# Establece el directorio de trabajo
-WORKDIR /Inversiones
+# Directorio de trabajo dentro del contenedor
+WORKDIR /app
 
-# Copia los archivos del proyecto al contenedor
-COPY . /Inversiones
+# Copiar el archivo pom.xml y los archivos fuente al contenedor
+COPY pom.xml .
 
-# Ejecuta el build con Maven
+# Descargar las dependencias necesarias para el build (sin compilar aún)
+RUN mvn dependency:go-offline
+
+# Copiar el código fuente
+COPY src ./src
+
+# Compilar el proyecto usando Maven
 RUN mvn clean package -DskipTests
 
-# Usa una imagen más ligera para correr la aplicación
-FROM openjdk:11-jre-slim
+# Fase de ejecución (runtime)
+FROM openjdk:17-jdk-slim
 
-# Copia el archivo JAR generado desde la imagen builder
-COPY --from=builder /Inversiones/target/Inversiones-0.0.1-SNAPSHOT.jar /app.jar
+# Directorio de trabajo dentro del contenedor
+WORKDIR /app
 
-# Define el comando para ejecutar la app
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+# Copiar el archivo .jar compilado desde la fase anterior
+COPY --from=build /app/target/Inversiones-0.0.1-SNAPSHOT.jar /app/Inversiones.jar
+
+# Exponer el puerto 8080 (comúnmente utilizado por Spring Boot)
+EXPOSE 8080
+
+# Ejecutar la aplicación Spring Boot
+ENTRYPOINT ["java", "-jar", "Inversiones.jar"]
