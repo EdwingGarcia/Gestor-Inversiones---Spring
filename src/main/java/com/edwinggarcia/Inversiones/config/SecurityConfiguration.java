@@ -4,14 +4,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 @Configuration
-public class    SecurityConfiguration {
+public class SecurityConfiguration {
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -35,29 +37,12 @@ public class    SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/include/**", "/css/**", "/icons/**", "/img/**", "/js/**", "/layer/**").permitAll()
-                        .requestMatchers("/login", "/registro").permitAll()
-                        .requestMatchers("/", "/inversiones", "/operativa").authenticated()
-                        .requestMatchers("/auditor*").hasRole("AUDITOR")
-                        .requestMatchers("/user*").hasAnyRole("USER", "AUDITOR") // Corregir el rol a "USER"
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/registro", "/api/login").permitAll() // Rutas públicas
+                        .requestMatchers("/api/**").authenticated() // Protege las rutas de la API
+                        .anyRequest().denyAll() // Bloquear cualquier otra ruta
                 )
-                .formLogin(login -> login
-                        .loginPage("/login")
-                        .permitAll()
-                        .defaultSuccessUrl("/inversiones/listar", true) // Forzar redirección
-                        .failureUrl("/login?error=true")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                )
-                .logout(logout -> logout
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll()
-                );
+                .csrf(csrf -> csrf.disable()) // Desactiva CSRF para API
+                .httpBasic(Customizer.withDefaults()); // Habilita autenticación básica
         return http.build();
     }
-
 }

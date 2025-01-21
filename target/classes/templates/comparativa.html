@@ -162,7 +162,7 @@
 
                     <tr th:each="broker : ${listaBrokerdto}">
                         <td th:text="${broker.brokerNombre}"></td>
-                        <td th:text="${#numbers.formatDecimal(broker.gananciasComision, 2, 2)}"><p>$/p>></td>
+                        <td th:text="${#numbers.formatDecimal(broker.gananciasComision, 2, 2)}"></td>
                     </tr>
 
                     </tbody>
