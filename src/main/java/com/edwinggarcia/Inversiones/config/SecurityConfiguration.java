@@ -1,5 +1,6 @@
 package com.edwinggarcia.Inversiones.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,9 +11,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfiguration {
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -37,12 +41,14 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/registro", "/api/login").permitAll() // Rutas públicas
-                        .requestMatchers("/api/**").authenticated() // Protege las rutas de la API
-                        .anyRequest().denyAll() // Bloquear cualquier otra ruta
+                        .requestMatchers("/api/registro", "/api/login").permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().denyAll()
                 )
-                .csrf(csrf -> csrf.disable()) // Desactiva CSRF para API
-                .httpBasic(Customizer.withDefaults()); // Habilita autenticación básica
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(Customizer.withDefaults());
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

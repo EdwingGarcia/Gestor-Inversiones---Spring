@@ -1,5 +1,6 @@
 package com.edwinggarcia.Inversiones.controller;
 
+import com.edwinggarcia.Inversiones.config.JwtTokenProvider;
 import com.edwinggarcia.Inversiones.controller.dto.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,10 +16,12 @@ public class RegistroController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+
 
 	@PostMapping("/api/login")
 	public String iniciarSesion(@RequestBody LoginRequest loginRequest) {
-		// Autenticación básica usando Email y Contraseña
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
 						loginRequest.getEmail(),
@@ -26,7 +29,8 @@ public class RegistroController {
 				)
 		);
 
-		// Si llega hasta aquí, la autenticación fue exitosa
-		return "Inicio de sesión exitoso"; // Puede retornar una respuesta de éxito o redirigir a algún recurso protegido
+		String token = jwtTokenProvider.generateToken(loginRequest.getEmail());
+
+		return "Bearer " + token; // Retornar el token al cliente
 	}
 }
