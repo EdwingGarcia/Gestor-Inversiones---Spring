@@ -33,19 +33,15 @@ public class InversionService {
 	public List<Inversion> listar() {
 		return inversionRepository.findAll();
 	}
-
 	public Inversion guardar(Inversion inversion) {
 		return inversionRepository.save(inversion);
 	}
-
 	public Inversion obtenerPorId(Long id) {
 		return inversionRepository.findById(id).orElse(null);
 	}
-
 	public void eliminar(Long id) {
 		inversionRepository.deleteById(id);
 	}
-
 	public List<Inversion> listarInversionesPorUsuario(String emailUsuario) {
 		return inversionRepository.findByEmailUsuario(emailUsuario);
 	}
@@ -70,12 +66,9 @@ public class InversionService {
 	public Estrategia encontrarEstrategiaporNombre (String nombre){
 		return estrategiaRepository.findByNombre(nombre);
 	}
-	public List<Inversion> listarInversionesPorBroker(String emailUsuario,Broker broker)
-	{
+	public List<Inversion> listarInversionesPorBroker(String emailUsuario,Broker broker) {
 		return inversionRepository.findByEmailUsuarioAndBroker(emailUsuario,broker);
 	}
-
-
 	public ComparativaDTO compararTablasInversionesPorFechas(List<Inversion> primeraLista, List<Inversion> segundaLista) {
 		if (primeraLista == null || segundaLista == null) {
 			return new ComparativaDTO();
@@ -93,62 +86,6 @@ public class InversionService {
 
 		return comparativa;
 	}
-
-	private double[] calcularMetricas(List<Inversion> lista) {
-		double sumaMontosInvertidos = 0.0;
-		double gananciasConComision = 0.0;
-
-		for (Inversion inversion : lista) {
-			sumaMontosInvertidos += inversion.getMontoInvertido();
-			if (inversion.getActivo() != null) {
-				double precioActual = inversion.getActivo().getPrecioActual();
-				double precioInversion = inversion.getPrecioInversion();
-				double comisionBroker = inversion.getBroker().getComisionPorcentaje();
-
-				double cantidadComprada = inversion.getMontoInvertido() / precioInversion;
-				double gananciaGenerada = precioActual * cantidadComprada-inversion.getMontoInvertido();
-				gananciasConComision += gananciaGenerada - (gananciaGenerada * comisionBroker);
-			}
-		}
-
-		return new double[]{sumaMontosInvertidos, gananciasConComision};
-	}
-
-
-
-	private List<String> obtenerTipoYNombreInversionMasRentable(List<Inversion> lista) {
-		Map<String, Double> rentabilidadPorTipo = new HashMap<>();
-		Map<String, String> nombrePorTipo = new HashMap<>(); // Mapa para almacenar el nombre de la inversión por tipo
-
-		for (Inversion i : lista) {
-			double precioActual = i.getActivo().getPrecioActual();
-			double precioInversion = i.getPrecioInversion();
-			double montoInvertido = i.getMontoInvertido();
-			String tipo = i.getTipo();
-			double rentabilidad = (precioActual - precioInversion) * (montoInvertido / precioInversion);
-
-			// Acumulamos rentabilidad por tipo
-			rentabilidadPorTipo.put(tipo, rentabilidadPorTipo.getOrDefault(tipo, 0.0) + rentabilidad);
-
-			// Guardamos el nombre de la inversión para cada tipo
-			if (!nombrePorTipo.containsKey(tipo)) {
-				nombrePorTipo.put(tipo, i.getActivo().getSimbolo()); // Se asume que 'getActivo().getNombre()' retorna el nombre del activo
-			}
-		}
-
-
-		double rentabilidadMaxima = rentabilidadPorTipo.values().stream()
-				.max(Double::compare)
-				.orElse(0.0);
-
-		List<String> tiposYNombresMasRentables = rentabilidadPorTipo.entrySet().stream()
-				.filter(entry -> entry.getValue() == rentabilidadMaxima)
-				.map(entry -> entry.getKey() + ": " + nombrePorTipo.get(entry.getKey())) // Concatenar tipo con nombre
-				.collect(Collectors.toList());
-
-		return tiposYNombresMasRentables;
-	}
-
 	public Map<String, String> obtenerActivosMasRentablesPorCadaTipo(String email) {
 		List<Inversion> lista = inversionRepository.findByEmailUsuario(email);
 		Map<String, List<Inversion>> inversionesPorTipo = new HashMap<>();
@@ -192,8 +129,6 @@ public class InversionService {
 		// Devolver el mapa con los activos más rentables por tipo
 		return activosMasRentablesPorTipo;
 	}
-
-
 	public Map<String, String> obtenerEstrategiaMasRentablePorCadaTipo(String email) {
 		List<Inversion> lista = inversionRepository.findByEmailUsuario(email);
 
@@ -260,9 +195,6 @@ public class InversionService {
 		// Devolver el mapa con las mejores estrategias por tipo
 		return estrategiasMasRentablesPorTipo;
 	}
-
-
-
 	public List<Activo> getActivosByTipo(String tipo) {
 		return activoRepository.findByTipo(tipo);
 	}
@@ -280,8 +212,6 @@ public class InversionService {
 			}
 		}
 	}
-
-
 	public List<String> obtenerEmailsAsociados(String emailUsuario){
 		Usuario usuario = usuarioRepository.findByEmail(emailUsuario);
 		return usuario.getEmailsAsociados();
@@ -294,7 +224,6 @@ public class InversionService {
 		}
 		return Collections.emptyList();
 	}
-
 	public TendenciasDTO obtenerTendenciasInversionesGlobales() {
 		List<Inversion> inversionesTodosUsuarios = inversionRepository.findAll();
 
@@ -334,27 +263,6 @@ public class InversionService {
 
 		return tendenciasDTO;
 	}
-
-
-	private List<String> obtenerTopFrecuencias(List<String> items, int total) {
-		return items.stream()
-				.collect(Collectors.groupingBy(item -> item, Collectors.counting()))
-				.entrySet().stream()
-				.sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Orden descendente por valor
-				.limit(5) // Tomar el Top 5
-				.map(entry -> entry.getKey() + " (" + String.format("%.2f", (entry.getValue() * 100.0 / total)) + "%)") // Calcular porcentaje
-				.toList();
-	}
-
-	private String obtenerTopFrecuenciaUnica(List<String> items) {
-		return items.stream()
-				.collect(Collectors.groupingBy(item -> item, Collectors.counting()))
-				.entrySet().stream()
-				.max(Comparator.comparingLong(Map.Entry::getValue))
-				.map(entry -> entry.getKey())
-				.orElse("No disponible");
-	}
-
 	public List<BrokerGananciaDTO> obtenerGananciasComisionDeCadaBrokerPorFecha(LocalDate fechaInicioLocal, LocalDate fechaFinLocal) {
 		List<Inversion> inversiones = inversionRepository.findByFechaInversionBetween(fechaInicioLocal, fechaFinLocal);
 		Map<String, Double> gananciasPorBroker = inversiones.stream()
@@ -379,6 +287,72 @@ public class InversionService {
 		double montoInvertido = inversion.getMontoInvertido();
 		return (precioActual  * (montoInvertido / precioInversion) - montoInvertido)*inversion.getBroker().getComisionPorcentaje();
 	}
+	private double[] calcularMetricas(List<Inversion> lista) {
+		double sumaMontosInvertidos = 0.0;
+		double gananciasConComision = 0.0;
+
+		for (Inversion inversion : lista) {
+			sumaMontosInvertidos += inversion.getMontoInvertido();
+			if (inversion.getActivo() != null) {
+				double precioActual = inversion.getActivo().getPrecioActual();
+				double precioInversion = inversion.getPrecioInversion();
+				double comisionBroker = inversion.getBroker().getComisionPorcentaje();
+
+				double cantidadComprada = inversion.getMontoInvertido() / precioInversion;
+				double gananciaGenerada = precioActual * cantidadComprada-inversion.getMontoInvertido();
+				gananciasConComision += gananciaGenerada - (gananciaGenerada * comisionBroker);
+			}
+		}
+
+		return new double[]{sumaMontosInvertidos, gananciasConComision};
+	}
+	private List<String> obtenerTipoYNombreInversionMasRentable(List<Inversion> lista) {
+		Map<String, Double> rentabilidadPorTipo = new HashMap<>();
+		Map<String, String> nombrePorTipo = new HashMap<>(); // Mapa para almacenar el nombre de la inversión por tipo
+
+		for (Inversion i : lista) {
+			double precioActual = i.getActivo().getPrecioActual();
+			double precioInversion = i.getPrecioInversion();
+			double montoInvertido = i.getMontoInvertido();
+			String tipo = i.getTipo();
+			double rentabilidad = (precioActual - precioInversion) * (montoInvertido / precioInversion);
+
+			// Acumulamos rentabilidad por tipo
+			rentabilidadPorTipo.put(tipo, rentabilidadPorTipo.getOrDefault(tipo, 0.0) + rentabilidad);
+
+			// Guardamos el nombre de la inversión para cada tipo
+			if (!nombrePorTipo.containsKey(tipo)) {
+				nombrePorTipo.put(tipo, i.getActivo().getSimbolo()); // Se asume que 'getActivo().getNombre()' retorna el nombre del activo
+			}
+		}
 
 
+		double rentabilidadMaxima = rentabilidadPorTipo.values().stream()
+				.max(Double::compare)
+				.orElse(0.0);
+
+		List<String> tiposYNombresMasRentables = rentabilidadPorTipo.entrySet().stream()
+				.filter(entry -> entry.getValue() == rentabilidadMaxima)
+				.map(entry -> entry.getKey() + ": " + nombrePorTipo.get(entry.getKey())) // Concatenar tipo con nombre
+				.collect(Collectors.toList());
+
+		return tiposYNombresMasRentables;
+	}
+	private List<String> obtenerTopFrecuencias(List<String> items, int total) {
+		return items.stream()
+				.collect(Collectors.groupingBy(item -> item, Collectors.counting()))
+				.entrySet().stream()
+				.sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Orden descendente por valor
+				.limit(5) // Tomar el Top 5
+				.map(entry -> entry.getKey() + " (" + String.format("%.2f", (entry.getValue() * 100.0 / total)) + "%)") // Calcular porcentaje
+				.toList();
+	}
+	private String obtenerTopFrecuenciaUnica(List<String> items) {
+		return items.stream()
+				.collect(Collectors.groupingBy(item -> item, Collectors.counting()))
+				.entrySet().stream()
+				.max(Comparator.comparingLong(Map.Entry::getValue))
+				.map(entry -> entry.getKey())
+				.orElse("No disponible");
+	}
 }

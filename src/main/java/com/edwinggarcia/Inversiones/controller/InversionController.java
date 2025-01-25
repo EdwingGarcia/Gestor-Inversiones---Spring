@@ -11,11 +11,14 @@ import com.edwinggarcia.Inversiones.service.InversionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/inversiones") // Prefijo para todas las rutas
@@ -29,7 +32,17 @@ public class InversionController {
 		this.inversionService = inversionService;
 		this.usuarioRepository = usuarioRepository;
 	}
+	@GetMapping("/agregar")
+	public ResponseEntity<Map<String, Object>> obtenerDatosFormularioAgregar(@RequestParam(required = false) String tipo) {
+		Map<String, Object> response = new HashMap<>();
+		response.put("inversion", new Inversion());
+		response.put("brokers", inversionService.getAllBrokers());
+		response.put("estrategias", inversionService.getAllEstrategias());
+		response.put("activos", inversionService.getAllActivosDisponibles());
+		response.put("tipos", inversionService.listarTiposActivos());
 
+		return ResponseEntity.ok(response);
+	}
 	@GetMapping
 	public ResponseEntity<List<Inversion>> listar(@RequestParam(required = false) String email) {
 		String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -75,15 +88,20 @@ public class InversionController {
 		return ResponseEntity.ok(comparativaDTO);
 	}
 
-	@PostMapping
+	@PostMapping("/guardar")
 	public ResponseEntity<Inversion> guardar(@RequestBody Inversion inversion) {
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		inversion.setEmailUsuario(email);
+		// Si ya estás obteniendo el email desde el contexto de seguridad, no necesitas enviarlo desde el frontend.
+		if (inversion.getEmailUsuario() == null || inversion.getEmailUsuario().isEmpty()) {
+			String email = SecurityContextHolder.getContext().getAuthentication().getName();
+			inversion.setEmailUsuario(email);
+		}
 		inversion.setEstado("Activo");
 		inversionService.guardar(inversion);
 
 		return ResponseEntity.ok(inversion);
 	}
+
+
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Inversion> mostrarFormularioEditar(@PathVariable Long id) {
