@@ -8,7 +8,9 @@ import com.edwinggarcia.Inversiones.repos.ActivoRepository;
 import com.edwinggarcia.Inversiones.repos.BrokerRepository;
 import com.edwinggarcia.Inversiones.repos.EstrategiaRepository;
 import com.edwinggarcia.Inversiones.repos.UsuarioRepository;
+import com.edwinggarcia.Inversiones.service.AnalisisInversionService;
 import com.edwinggarcia.Inversiones.service.InversionService;
+import com.edwinggarcia.Inversiones.service.ReferenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,23 +30,26 @@ public class InversionController {
 	private final ActivoRepository activoRepository;
 	private final EstrategiaRepository estrategiaRepository;
 	private final BrokerRepository brokerRepository;
+	private final ReferenciaService referenciaService;
+
 
 	@Autowired
-	public InversionController(InversionService inversionService, UsuarioRepository usuarioRepository, EstrategiaRepository estrategiaRepository, ActivoRepository activoRepository, BrokerRepository brokerRepository) {
+	public InversionController(InversionService inversionService, UsuarioRepository usuarioRepository, EstrategiaRepository estrategiaRepository, ActivoRepository activoRepository, BrokerRepository brokerRepository,ReferenciaService referenciaService) {
 		this.inversionService = inversionService;
 		this.usuarioRepository = usuarioRepository;
 		this.activoRepository = activoRepository;
 		this.estrategiaRepository = estrategiaRepository;
 		this.brokerRepository = brokerRepository;
+		this.referenciaService=referenciaService;
 	}
 
 	@GetMapping("/agregar")
 	public ResponseEntity<Map<String, Object>> obtenerDatosFormularioAgregar(@RequestParam(required = false) String tipo) {
 		Map<String, Object> response = new HashMap<>();
 		response.put("inversion", new Inversion());
-		response.put("brokers", inversionService.getAllBrokers());
-		response.put("estrategias", inversionService.getAllEstrategias());
-		response.put("activos", inversionService.getAllActivosDisponibles());
+		response.put("brokers", referenciaService.getAllBrokers());
+		response.put("estrategias", referenciaService.getAllEstrategias());
+		response.put("activos", referenciaService.getAllActivosDisponibles());
 		response.put("tipos", inversionService.listarTiposActivos());
 		return ResponseEntity.ok(response);
 	}

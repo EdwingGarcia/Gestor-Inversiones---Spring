@@ -20,14 +20,18 @@ public class InversionService {
 	private final EstrategiaRepository estrategiaRepository;
 	private final ActivoRepository activoRepository;
 	private final UsuarioRepository usuarioRepository;
+	private final AnalisisInversionService analisisInversionService;
+
 
 	@Autowired
-	public InversionService(InversionRepository inversionRepository, BrokerRepository brokerRepository, EstrategiaRepository estrategiaRepository, ActivoRepository activoRepository, UsuarioRepository usuarioRepository) {
+	public InversionService(InversionRepository inversionRepository, BrokerRepository brokerRepository, EstrategiaRepository estrategiaRepository, ActivoRepository activoRepository, UsuarioRepository usuarioRepository,AnalisisInversionService analisisInversionService) {
 		this.inversionRepository = inversionRepository;
 		this.brokerRepository= brokerRepository;
 		this.estrategiaRepository=estrategiaRepository;
 		this.activoRepository=activoRepository;
 		this.usuarioRepository=usuarioRepository;
+		this.analisisInversionService=analisisInversionService;
+
 	}
 
 	public List<Inversion> listar() {
@@ -48,17 +52,8 @@ public class InversionService {
 	public List<Inversion> listarInversionesPorRangoFechas(String emailUsuario, LocalDate fechaInicio, LocalDate fechaFin) {
 		return inversionRepository.findByEmailUsuarioAndFechaInversionBetween(emailUsuario, fechaInicio, fechaFin);
 	}
-	public List<Broker> getAllBrokers() {
-		return brokerRepository.findAll();
-	}
-	public List<Estrategia> getAllEstrategias() {
-		return estrategiaRepository.findAll();
-	}
 	public Broker encontrarBrokerporNombre (String nombre){
 		return brokerRepository.findByNombre(nombre);
-	}
-	public List<Activo> getAllActivosDisponibles() {
-		return activoRepository.findAll();
 	}
 	public Activo encontrarActivoPorNombre (String nombre){
 		return activoRepository.findBySimbolo(nombre);
@@ -75,8 +70,8 @@ public class InversionService {
 		}
 		ComparativaDTO comparativa = new ComparativaDTO();
 
-		double[] metricasPrimeraLista = calcularMetricas(primeraLista);
-		double[] metricasSegundaLista = calcularMetricas(segundaLista);
+		double[] metricasPrimeraLista = analisisInversionService.calcularMetricas(primeraLista);
+		double[] metricasSegundaLista = analisisInversionService.calcularMetricas(segundaLista);
 		comparativa.setTipoMasRentablePrimeraLista(obtenerTipoYNombreInversionMasRentable(primeraLista));
 		comparativa.setTipoMasRentableSegundaLista(obtenerTipoYNombreInversionMasRentable(segundaLista));
 		comparativa.setSumaMontosInvertidosPrimeraLista(metricasPrimeraLista[0]);
@@ -280,31 +275,11 @@ public class InversionService {
 				})
 				.collect(Collectors.toList());
 	}
-
 	private double calcularGananciaComision(Inversion inversion) {
 		double precioActual = inversion.getActivo().getPrecioActual();
 		double precioInversion = inversion.getPrecioInversion();
 		double montoInvertido = inversion.getMontoInvertido();
 		return (precioActual  * (montoInvertido / precioInversion) - montoInvertido)*inversion.getBroker().getComisionPorcentaje();
-	}
-	private double[] calcularMetricas(List<Inversion> lista) {
-		double sumaMontosInvertidos = 0.0;
-		double gananciasConComision = 0.0;
-
-		for (Inversion inversion : lista) {
-			sumaMontosInvertidos += inversion.getMontoInvertido();
-			if (inversion.getActivo() != null) {
-				double precioActual = inversion.getActivo().getPrecioActual();
-				double precioInversion = inversion.getPrecioInversion();
-				double comisionBroker = inversion.getBroker().getComisionPorcentaje();
-
-				double cantidadComprada = inversion.getMontoInvertido() / precioInversion;
-				double gananciaGenerada = precioActual * cantidadComprada-inversion.getMontoInvertido();
-				gananciasConComision += gananciaGenerada - (gananciaGenerada * comisionBroker);
-			}
-		}
-
-		return new double[]{sumaMontosInvertidos, gananciasConComision};
 	}
 	private List<String> obtenerTipoYNombreInversionMasRentable(List<Inversion> lista) {
 		Map<String, Double> rentabilidadPorTipo = new HashMap<>();
